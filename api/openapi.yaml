@@ -1,0 +1,182 @@
+openapi: 3.0.0
+info:
+  description: Move your app forward with the Uber API
+  title: Uber API
+  version: 1.0.0
+servers:
+- url: "https://api.uber.com/v1"
+paths:
+  /products:
+    get:
+      description: "The Products endpoint returns information about the Uber products\
+        \ offered at a given location. The response includes the display name and\
+        \ other details about each product, and lists the products in the proper display\
+        \ order."
+      operationId: productsGet
+      parameters:
+      - description: Latitude component of location.
+        explode: true
+        in: query
+        name: latitude
+        required: true
+        schema:
+          format: double
+          type: number
+        style: form
+      - description: Longitude component of location.
+        explode: true
+        in: query
+        name: longitude
+        required: true
+        schema:
+          format: double
+          type: number
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductList"
+          description: An array of products
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+          description: Unexpected error
+      security:
+      - apikey: []
+      summary: Product Types
+      tags:
+      - Products
+      x-accepts: application/json
+components:
+  schemas:
+    Product:
+      example:
+        image: image
+        product_id: product_id
+        description: description
+        display_name: display_name
+        capacity: 0
+      properties:
+        product_id:
+          description: "Unique identifier representing a specific product for a given\
+            \ latitude & longitude. For example, uberX in San Francisco will have\
+            \ a different product_id than uberX in Los Angeles."
+          type: string
+        description:
+          description: Description of product.
+          type: string
+        display_name:
+          description: Display name of product.
+          type: string
+        capacity:
+          description: "Capacity of product. For example, 4 people."
+          type: integer
+        image:
+          description: Image URL representing the product.
+          type: string
+    ProductList:
+      example:
+        products:
+        - image: image
+          product_id: product_id
+          description: description
+          display_name: display_name
+          capacity: 0
+        - image: image
+          product_id: product_id
+          description: description
+          display_name: display_name
+          capacity: 0
+      properties:
+        products:
+          description: Contains the list of products
+          items:
+            $ref: "#/components/schemas/Product"
+          type: array
+    PriceEstimate:
+      properties:
+        product_id:
+          description: "Unique identifier representing a specific product for a given\
+            \ latitude & longitude. For example, uberX in San Francisco will have\
+            \ a different product_id than uberX in Los Angeles"
+          type: string
+        currency_code:
+          description: "[ISO 4217](http://en.wikipedia.org/wiki/ISO_4217) currency\
+            \ code."
+          type: string
+        display_name:
+          description: Display name of product.
+          type: string
+        estimate:
+          description: "Formatted string of estimate in local currency of the start\
+            \ location. Estimate could be a range, a single number (flat rate) or\
+            \ \"Metered\" for TAXI."
+          type: string
+        low_estimate:
+          description: Lower bound of the estimated price.
+          type: number
+        high_estimate:
+          description: Upper bound of the estimated price.
+          type: number
+        surge_multiplier:
+          description: Expected surge multiplier. Surge is active if surge_multiplier
+            is greater than 1. Price estimate already factors in the surge multiplier.
+          type: number
+    Profile:
+      properties:
+        first_name:
+          description: First name of the Uber user.
+          type: string
+        last_name:
+          description: Last name of the Uber user.
+          type: string
+        email:
+          description: Email address of the Uber user
+          type: string
+        picture:
+          description: Image URL of the Uber user.
+          type: string
+        promo_code:
+          description: Promo code of the Uber user.
+          type: string
+    Activity:
+      properties:
+        uuid:
+          description: Unique identifier for the activity
+          type: string
+    Activities:
+      properties:
+        offset:
+          description: Position in pagination.
+          format: int32
+          type: integer
+        limit:
+          description: Number of items to retrieve (100 max).
+          format: int32
+          type: integer
+        count:
+          description: Total number of items available.
+          format: int32
+          type: integer
+        history:
+          items:
+            $ref: "#/components/schemas/Activity"
+          type: array
+    Error:
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        fields:
+          type: string
+  securitySchemes:
+    apikey:
+      in: query
+      name: server_token
+      type: apiKey
+
