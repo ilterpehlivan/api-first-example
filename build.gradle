@@ -34,7 +34,7 @@ repositories {
 
 ext {
     set('springCloudVersion', "Hoxton.SR6")
-    set('springFoxVersion', "3.0.0-SNAPSHOT")
+    set('springFoxVersion', "3.0.0")
 }
 
 //sourceSets{
@@ -71,7 +71,7 @@ test {
 }
 
 
-def openapiSourceFile = "$rootDir/api/petstore-swagger2.yaml"
+def openapiSourceFile = "$rootDir/api/users-api.yaml"
 def openapiTargetDir = "${buildDir}/generated"
 
 task javaServerOpenApiGenerate(type: org.openapitools.generator.gradle.plugin.tasks.GenerateTask) {
